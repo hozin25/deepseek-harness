@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: master
           fetch-depth: 0
@@ -22,5 +22,5 @@ jobs:
         run: |
           git remote add upstream https://github.com/deepseek-ai/deepseek-harness.git
           git fetch upstream master
-          git merge --ff-only upstream/master
-          git push
+          git rebase upstream/master
+          git push --force-with-lease
