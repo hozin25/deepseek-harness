@@ -22,5 +22,15 @@ jobs:
         run: |
           git remote add upstream https://github.com/deepseek-ai/deepseek-harness.git
           git fetch upstream master
-          git rebase upstream/master
+          if ! git rebase upstream/master; then
+            conflicts=$(git diff --name-only --diff-filter=U)
+            if [ "$conflicts" = ".github/dependabot.yml" ]; then
+              # Dependabot is intentionally disabled on this fork; keep the file deleted.
+              git rm .github/dependabot.yml
+              GIT_EDITOR=true git rebase --continue
+            else
+              echo "Unhandled rebase conflicts: $conflicts" >&2
+              exit 1
+            fi
+          fi
           git push --force-with-lease
