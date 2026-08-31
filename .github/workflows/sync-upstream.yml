@@ -5,19 +5,17 @@ on:
     - cron: '23 1 * * *'
   workflow_dispatch:
 
-permissions:
-  contents: write
-  workflows: write
-
 jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
+      # GITHUB_TOKEN cannot push commits that touch workflow files; the PAT can.
       - name: Checkout
         uses: actions/checkout@v5
         with:
           ref: master
           fetch-depth: 0
+          token: ${{ secrets.SYNC_TOKEN }}
 
       - name: Sync with upstream
         run: |
